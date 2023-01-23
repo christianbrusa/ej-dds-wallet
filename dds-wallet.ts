@@ -8,6 +8,15 @@ class Billetera {
     this.saldoActual = saldoActual;
   }
 
+  restarSaldo(monto){
+    console.log(`Restando dinero al usuario ${this.cbu}`);
+    this.saldoActual -= monto;
+  }
+  
+  sumarSaldo(monto){
+    console.log(`Sumando dinero al usuario ${this.cbu}`);
+    this.saldoActual += monto;
+  }
 }
 
 class Enviar implements Transferencia {
