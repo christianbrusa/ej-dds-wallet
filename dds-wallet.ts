@@ -1,0 +1,3 @@
+interface Transferencia {
+  ejecutar(): void;
+}
