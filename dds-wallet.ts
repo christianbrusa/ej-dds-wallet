@@ -18,6 +18,22 @@ class Enviar implements Transferencia {
   }
   
   ejecutar(){
-    
+
+  }
+}
+
+class Usuario {
+  constructor(billetera: Billetera){
+    this.billetera = billetera;
+  }
+  
+  transferencia: Transferencia;
+  
+  setTransferencia(transferencia){
+    this.transferencia = transferencia;
+  }
+  
+  transferir(){
+    this.transferencia.ejecutar();
   }
 }
