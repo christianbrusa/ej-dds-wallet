@@ -27,7 +27,13 @@ class Enviar implements Transferencia {
   }
   
   ejecutar(){
-
+    if(this.montoEnviar > this.remitente.saldoActual){
+      throw new Error("No es posible realizar la transferencia debido a que el monto a enviar supera el saldo disponible");
+    }
+    else{
+      this.remitente.restarSaldo(this.montoEnviar);
+      this.destinatario.sumarSaldo(this.montoEnviar);
+    }
   }
 }
 
