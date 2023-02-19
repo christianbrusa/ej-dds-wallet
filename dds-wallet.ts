@@ -1,3 +1,6 @@
+import moment from "moment";
+import cron from "cron";
+
 interface Transferencia {
   ejecutar(): void;
 }
@@ -11,11 +14,13 @@ class Billetera {
   restarSaldo(monto){
     console.log(`Restando dinero al usuario ${this.cbu}`);
     this.saldoActual -= monto;
+    console.log(`El saldo actual del usuario ${this.cbu} es ${this.saldoActual}`);
   }
   
   sumarSaldo(monto){
     console.log(`Sumando dinero al usuario ${this.cbu}`);
     this.saldoActual += monto;
+    console.log(`El saldo actual del usuario ${this.cbu} es ${this.saldoActual}`);
   }
 }
 
@@ -61,13 +66,24 @@ class Usuario {
     this.billetera = billetera;
   }
   
-  transferencia: Transferencia;
+  queue: Array<Transferencia> = [];
+  job: cron.CronJob;
   
-  setTransferencia(transferencia){
-    this.transferencia = transferencia;
+  setTransferencia(transferencia: Transferencia){
+    this.queue.push(transferencia);
   }
   
   transferir(){
-    this.transferencia.ejecutar();
+    this.job = new cron.CronJob("*/1 * * * *", () => {
+      const fechaActual = moment().format();
+      this.queue.forEach(transferencia => {
+        if(this.queue.length > 0 && (transferencia.fecha <= fechaActual || transferencia instanceof Enviar)) {
+          transferencia.ejecutar();
+          this.queue = this.queue.filter(it => it != transferencia);
+        }
+      })
+      console.log("Cola de transferencias actualizada", this.queue);
+    });
+    this.job.start();
   }
 }
