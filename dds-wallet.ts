@@ -1,5 +1,6 @@
 import moment from "moment";
 import cron from "cron";
+import _ from "lodash";
 
 interface Transferencia {
   ejecutar(): void;
@@ -77,12 +78,15 @@ class Usuario {
     this.job = new cron.CronJob("*/1 * * * *", () => {
       const fechaActual = moment().format();
       this.queue.forEach(transferencia => {
-        if(this.queue.length > 0 && (transferencia.fecha <= fechaActual || transferencia instanceof Enviar)) {
+        if(!_.isEmpty(this.queue) && (transferencia.fecha <= fechaActual || transferencia instanceof Enviar)) {
           transferencia.ejecutar();
           this.queue = this.queue.filter(it => it != transferencia);
         }
       })
       console.log("Cola de transferencias actualizada", this.queue);
+      if(_.isEmpty(this.queue)){
+        this.job.stop();
+      }
     });
     this.job.start();
   }
